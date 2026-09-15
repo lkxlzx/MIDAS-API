@@ -48,7 +48,7 @@
 | 7-2 | 방식2: ID 범위 지정 (예: `"101 to 105"`) | `NODE_ELEMS.TO` | String | — | Optional |
 | 7-3 | 방식3: 구조 그룹명 지정 (예: `"SG1"`) | `NODE_ELEMS.STRUCTURE_GROUP_NAME` | String | — | Optional |
 | 8 | 하중 이름 & 타입 (아래 접미사 규칙) | `"LOAD_CASE_NAMES"` | Array [String] | All | Optional |
-| 9 | 시공단계 스텝 활성화 | `"OPT_CS"` | Boolean | `false` | Optional |
+| 9 | 시공단계 스텝 활성화 (아래 ⚠️ — 값별 동작이 다름) | `"OPT_CS"` | Boolean | `false`(표기상) | Optional |
 | 10 | 시공단계 스텝 이름 | `"STAGE_STEP"` | Array [String] | All | Optional |
 
 **`LOAD_CASE_NAMES` 접미사 규칙**
@@ -65,6 +65,28 @@
 > **참고:** `OPT_CS`·`STAGE_STEP`는 시공단계 결과 조회 시 사용합니다(Reaction의 Local–Surface
 > Spring 변형, Beam Force (Static Prestress), Concurrent Joint Force는 이 두 필드를 지원하지
 > 않음 — 각 절 참조). `STAGE_STEP` 항목은 `"CS1:001(first)"`, `"CS1:002(last)"` 형식입니다.
+
+> ⚠️ **`OPT_CS`는 3상태다 — 생략과 `false`가 서로 다르게 동작한다 (2026-09-15 확인).**
+> 2026-09-11 원문 갱신으로 Reaction 아티클(`36009349748249`) Specifications 표에 값별 동작
+> 설명이 추가됐다.
+>
+> | 보낸 값 | 동작 |
+> | --- | --- |
+> | `true` | Construction Stage(**첫 단계**)로 전환해 CS 결과를 반환 |
+> | `false` | PostCS(**최종 단계**)로 전환해 Post 결과를 반환 |
+> | **필드 생략** | **현재 뷰 모드를 유지**하고 그에 맞는 Post/CS 결과를 반환 |
+>
+> 즉 `"OPT_CS": false`를 명시적으로 보내는 것은 "시공단계를 쓰지 않는다"가 아니라 **최종 단계로
+> 뷰를 전환하라**는 지시이며, 아예 안 보내는 것과 결과가 달라질 수 있다.
+>
+> 다만 같은 표의 Default 열은 여전히 `false`로 적혀 있어 설명과 어긋난다. 생략 시 동작이 별도로
+> 기술된 이상 Default를 `false`로 보긴 어려우므로 위 표의 기본값 칸에 `(표기상)`을 덧붙였다.
+> **실제 API 동작은 검증하지 않았다** — 오류 제보 대상.
+>
+> 이 설명은 2026-09-15 기준 **Reaction 아티클에만** 있다. 같은 `post/TABLE` 엔드포인트의 형제
+> 아티클(Displacements `36009638400281`, Beam Stress `36011455813273` 등)은 아직
+> "Activation - Construction Stage Step" 한 줄뿐이다. 같은 필드이므로 동작도 같다고 보는 것이
+> 자연스럽지만, 원문 근거는 Reaction 한 곳뿐임을 밝혀 둔다.
 
 ### 공통 Response 구조
 
@@ -307,7 +329,7 @@ for row in table.get("DATA", []):
 
 | No. | 설명 | Key | Value 타입 | 기본값 | 필수 |
 |-----|------|-----|-----------|--------|------|
-| 1 | 시공단계 스텝 활성화 | `"OPT_CS"` | Boolean | `false` | Optional |
+| 1 | 시공단계 스텝 활성화 (값별 동작은 [공통 파라미터 표](#공통-request-구조-및-파라미터) ⚠️ 참조) | `"OPT_CS"` | Boolean | `false`(표기상) | Optional |
 | 2 | 시공단계 스텝 이름 목록 | `"STAGE_STEP"` | Array [String] | All | Optional |
 | 3 | 변위 표시 방식 · 누적: `"Accumulative"` / 현재: `"Current"` / 실제: `"Real"` | `"DISP_OPT"` | String | `"Accumulative"` | Optional |
 
@@ -1115,7 +1137,7 @@ print(f"프리스트레스 부재력 {len(table.get('DATA', []))}행")
 
 | No. | 설명 | Key | Value 타입 | 기본값 | 필수 |
 |-----|------|-----|-----------|--------|------|
-| 1 | 시공단계 스텝 활성화 | `"OPT_CS"` | Boolean | `false` | Optional |
+| 1 | 시공단계 스텝 활성화 (값별 동작은 [공통 파라미터 표](#공통-request-구조-및-파라미터) ⚠️ 참조) | `"OPT_CS"` | Boolean | `false`(표기상) | Optional |
 | 2 | 시공단계 스텝 이름 목록 | `"STAGE_STEP"` | Array [String] | All | Optional |
 
 > ⚠️ 2026-08-30 정기 점검 확인 (article id `36011455813273`, 원문 갱신 2026-08-27): `BEAMSTRESS`·

@@ -48,8 +48,15 @@
 | 7-2 | 방식2: ID 범위 지정 (예: `"101 to 105"`) | `NODE_ELEMS.TO` | String | — | Optional |
 | 7-3 | 방식3: 구조 그룹명 지정 (예: `"SG1"`) | `NODE_ELEMS.STRUCTURE_GROUP_NAME` | String | — | Optional |
 | 8 | 하중 이름 & 타입 (아래 접미사 규칙) | `"LOAD_CASE_NAMES"` | Array [String] | All | Optional |
-| 9 | 시공단계 스텝 활성화 | `"OPT_CS"` | Boolean | `false` | Optional |
+| 9 | 시공단계 스텝 활성화 (아래 ⚠️ — 값별 동작이 다름) | `"OPT_CS"` | Boolean | `false`(표기상) | Optional |
 | 10 | 시공단계 스텝 이름 | `"STAGE_STEP"` | Array [String] | All | Optional |
+
+> ⚠️ **`OPT_CS`는 3상태다 — 생략과 `false`가 서로 다르게 동작한다 (2026-09-15 확인).**
+> `true`는 Construction Stage(첫 단계)로 전환해 CS 결과를, `false`는 PostCS(최종 단계)로 전환해
+> Post 결과를 반환하며, **필드를 생략하면 현재 뷰 모드를 유지**한 채 그에 맞는 결과를 반환한다.
+> 즉 `false`를 명시하는 것과 아예 안 보내는 것은 같지 않다. 원문 근거와 Default 열 불일치에 대한
+> 자세한 내용은 [19장 공통 파라미터 표](./19_POST_AnalysisResult_1.md#공통-request-구조-및-파라미터)의
+> 같은 항목 주석을 참고할 것. **실제 API 동작은 검증하지 않았다.**
 
 **`LOAD_CASE_NAMES` 접미사 규칙**
 

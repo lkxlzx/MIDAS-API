@@ -1,10 +1,10 @@
 {
- "article_count": 68,
+ "article_count": 70,
  "articles": {
   "35639730101529": {
    "html_url": "https://support.midasuser.com/hc/ko/articles/35639730101529-Plug-in-Online-Manual",
    "title": "Plug-in Online Manual",
-   "updated_at": "2026-08-28T06:56:15Z"
+   "updated_at": "2026-09-11T00:26:17Z"
   },
   "35639906272025": {
    "html_url": "https://support.midasuser.com/hc/ko/articles/35639906272025-Easy-Capture-Generator",
@@ -84,12 +84,12 @@
   "35693347852569": {
    "html_url": "https://support.midasuser.com/hc/ko/articles/35693347852569-Introduction-to-MIDAS-Plug-in",
    "title": "Introduction to MIDAS Plug-in",
-   "updated_at": "2026-08-31T04:56:54Z"
+   "updated_at": "2026-09-08T06:36:55Z"
   },
   "35694950947353": {
    "html_url": "https://support.midasuser.com/hc/ko/articles/35694950947353-How-to-use-MIDAS-Plug-ins",
    "title": "How to use MIDAS Plug-ins",
-   "updated_at": "2026-08-31T04:57:18Z"
+   "updated_at": "2026-09-08T06:48:36Z"
   },
   "35824220762521": {
    "html_url": "https://support.midasuser.com/hc/ko/articles/35824220762521-SPACE-GASS-Converter",
@@ -249,7 +249,7 @@
   "58178248491161": {
    "html_url": "https://support.midasuser.com/hc/ko/articles/58178248491161-Stiffness-Auto-Tuner",
    "title": "Stiffness Auto Tuner",
-   "updated_at": "2026-08-20T01:26:42Z"
+   "updated_at": "2026-09-14T00:18:35Z"
   },
   "60307252076441": {
    "html_url": "https://support.midasuser.com/hc/ko/articles/60307252076441-Alignment-Editor",
@@ -340,6 +340,16 @@
    "html_url": "https://support.midasuser.com/hc/ko/articles/61655350763289-Model-Report-Builder",
    "title": "Model Report Builder",
    "updated_at": "2026-08-28T06:37:32Z"
+  },
+  "61971621469849": {
+   "html_url": "https://support.midasuser.com/hc/ko/articles/61971621469849-RC-Slab-and-Shell-Assessment",
+   "title": "RC Slab and Shell Assessment",
+   "updated_at": "2026-09-07T00:47:06Z"
+  },
+  "62123537156889": {
+   "html_url": "https://support.midasuser.com/hc/ko/articles/62123537156889-Concurrent-Force-Reporter",
+   "title": "Concurrent Force Reporter",
+   "updated_at": "2026-09-11T00:23:17Z"
   }
  },
  "section_id": "plugin"

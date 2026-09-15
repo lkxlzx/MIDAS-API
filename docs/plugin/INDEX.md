@@ -22,7 +22,7 @@ Manual과 같지만, 문서 성격은 다르다:
 | 대상 독자 | REST API를 직접 호출하는 개발자 | GUI에서 완성된 도구를 쓰는 엔지니어(+직접 Plug-in을 만들려는 개발자) |
 | 원문 성격 | 엔드포인트별 Key/Value 스키마 표 | 스크린샷 기반 GUI 사용법 워크스루 |
 | 문서 단위 | 챕터(엔드포인트 그룹) | 개별 Plug-in 툴 1개 = 파일 1개 |
-| Zendesk 섹션 | JSON Manual (651개 아티클) | Plug-in (Introduction 4건 + Plug-in Item 57건) |
+| Zendesk 섹션 | JSON Manual (651개 아티클) | Plug-in (Introduction 4건 + Plug-in Item 65건, 폐기 2건 별도) |
 
 **따라서 `docs/manual`의 "TABLE_TYPE 표 → Response HEAD → Request/Response JSON → Python 예제"
 관례를 그대로 적용하지 않는다.** 대신 [아래 템플릿](#toolsmd-개별-문서-템플릿)을 따른다.
@@ -64,7 +64,7 @@ Manual과 같지만, 문서 성격은 다르다:
 
 ---
 
-## Plug-in Item — 개별 툴 (65건, 그중 폐기됨 2건)
+## Plug-in Item — 개별 툴 (67건, 그중 폐기됨 2건)
 
 원문 페이지는 하위 카테고리 없이 알파벳순 flat 목록이라, 이 표도 원문 순서를 그대로 따른다.
 파일명은 번호를 매기지 않고 툴 이름을 슬러그화한 것 — 신규 Plug-in이 추가돼도 기존 파일 재번호가
@@ -137,6 +137,8 @@ Manual과 같지만, 문서 성격은 다르다:
 | 63 | Load Combination Contribution Analyzer | [tools/Load_Combination_Contribution_Analyzer.md](tools/Load_Combination_Contribution_Analyzer.md) | ✅ 작성 완료 | [원문](https://support.midasuser.com/hc/ko/articles/61258768334233-Load-Combination-Contribution-Analyzer) |
 | 64 | Point to Patch Convertor | — | ⬜ 미작성 | [원문](https://support.midasuser.com/hc/en-us/articles/61486703401753-Point-to-Patch-Convertor) |
 | 65 | Model Report Builder | — | ⬜ 미작성 | [원문](https://support.midasuser.com/hc/en-us/articles/61655350763289-Model-Report-Builder) |
+| 66 | RC Slab and Shell Assessment | — | ⬜ 미작성 | [원문](https://support.midasuser.com/hc/en-us/articles/61971621469849-RC-Slab-and-Shell-Assessment) |
+| 67 | Concurrent Force Reporter | — | ⬜ 미작성 | [원문](https://support.midasuser.com/hc/en-us/articles/62123537156889-Concurrent-Force-Reporter) |
 
 [^1]: 원문 페이지에는 "Image Capture Generator"라는 이름으로도 한 번 더 나열되어 있으나 같은
     URL(`35639906272025-Easy-Capture-Generator`)을 가리키는 동일 아티클이다.

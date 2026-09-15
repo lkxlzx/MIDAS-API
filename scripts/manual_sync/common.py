@@ -46,11 +46,13 @@ _PLUGIN_TOOL_IDS = [
     "60997850893209", "60998764028185",
     "61258768334233", "61259043302041", "61259174909849", "61259225090329",
     "61259382041369", "61486703401753", "61655350763289",
+    # 2026-09-15 정기 점검에서 랜딩 페이지 재스크래핑으로 발견 (신규 2건, 삭제 0건)
+    "61971621469849", "62123537156889",
 ]
 # 2026-08-30 폐기됨(공식 사이트에서 삭제, 404 확인) — 더 이상 조회 대상 아님. docs/plugin/INDEX.md
 # No.53/54("Floor Load Table Generator"/"Easy Result Table")에 ⚠️ 폐기됨으로 표시, 문서는 보존.
 #   "49475987573657", "49504449511705",
-PLUGIN_ARTICLE_IDS = [_PLUGIN_LANDING_ID] + _PLUGIN_GUIDE_IDS + _PLUGIN_TOOL_IDS  # 68 ids
+PLUGIN_ARTICLE_IDS = [_PLUGIN_LANDING_ID] + _PLUGIN_GUIDE_IDS + _PLUGIN_TOOL_IDS  # 70 ids
 
 # Zendesk resources tracked by this repo. "manual" = JSON Manual section (REST endpoint
 # schema reference, docs/manual/*), "plugin" = Plug-in article-id allowlist (GUI-embedded

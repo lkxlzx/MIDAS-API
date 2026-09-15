@@ -1875,8 +1875,8 @@
     "1. Reaction": {
       "article_id": "36009349748249",
       "article_title": "Reaction - Analysis Result Table",
-      "verified_at": "2026-08-26",
-      "note": "REACTIONL/REACTIONSURFACESPRING 응답 HEAD 변형 3종 및 REACTIONG 전용 SUB_TABLES(SUMMATIONOFREACTIONFORCESPRINTOUT) 누락 보강. TABLE_TYPE 값은 표+스키마 일치(REACTIONSURFACESPRING) 유지, 예제 1건만의 REACTIONLSURFACESPRING 표기는 판단 보류·오류제보 대상"
+      "verified_at": "2026-09-15",
+      "note": "2026-09-15 정기 점검(원문 갱신 2026-09-11, ko/en-us/ja 3개 로케일 동시): 본문·HEAD 7종·SUB_TABLES(SUMMATIONOFREACTIONFORCESPRINTOUT)·TABLE_TYPE enum 모두 기존 문서와 일치하며, 새로 추가된 것은 Specifications 표 9행 OPT_CS의 값별 동작 설명 1건뿐. true=CS(첫 단계) 전환, false=PostCS(최종 단계) 전환, 필드 생략=현재 뷰 모드 유지로 3상태이며 생략과 false가 다르다. 같은 표 Default 열은 여전히 false여서 설명과 불일치(오류 제보 대상). 이 설명은 2026-09-15 기준 Reaction 아티클에만 있고 형제 아티클(36009638400281 등)은 'Activation - Construction Stage Step' 한 줄뿐이라, 19/20/21장 공통 파라미터 표에 반영하되 근거가 Reaction 한 곳임을 주석에 명시함. REACTIONLSURFACESPRING(예제 1건만의 L 추가 표기)은 이번 갱신에도 그대로 남아 있어 판단 보류 유지."
     },
     "2. Displacements": {
       "article_id": "36009638400281",
