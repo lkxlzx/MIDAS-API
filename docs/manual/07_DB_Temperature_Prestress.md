@@ -904,6 +904,15 @@ midas_api("DELETE", "/db/TDNT", {"Assign": {"1": {}}})
 > 재대조로 발견). Round 타입은 `bFIX`/`R` 대신 `RADIUS`·`OPT`·`ANGLE`·`HEIGHT`·`RADIUS2`를 쓴다.
 > 원문 Specifications 표는 `RADIUS`의 Value Type을 "Boolean"으로 표기했으나, 예제(`RADIUS": 0, 20` 등
 > 숫자값)와 모순되므로 CLAUDE.md 원칙(예제 우선)에 따라 Number로 기재한다.
+>
+> ✅ **2026-09-18 라이브 검증으로 확정(추정 아님).** Gen NX 2026 v2.1 · Civil NX 2026 v2.2
+> (Build 09/15/2026) 양쪽에서 `PROFY[].RADIUS = false`가 `Wrong Field`로 거부되고 후속 GET은
+> `Not Found Key`를 반환했다. 숫자값(`0`, `20`)은 두 제품 모두 생성·보존됐다. 원문 표의
+> "Boolean" 표기는 오류이며 실제 wire type은 `Number`다. 원문 JSON Schema도 `PROFY`·`PROFZ`·`PROF`
+> 세 분기 모두 `"RADIUS": {"type": "number"}`로 일치한다. Jira `MAPI-2485` B-2로 제보 중.
+>
+> ⚠️ **이 API는 오류 본문을 HTTP 201로 돌려준다.** 상태 코드만 보면 성공으로 오판하므로,
+> 반드시 응답 본문과 후속 GET을 함께 확인할 것.
 
 | No. | Description | Key | Value Type | Default | Required |
 |-----|-------------|-----|-----------|---------|----------|
@@ -940,6 +949,15 @@ midas_api("DELETE", "/db/TDNT", {"Assign": {"1": {}}})
 | (1) | Coordinates \[x, y, z\] | `"PT"` | Array \[Number, 3\] | - | Required |
 | (2) | Fix Option | `"bFIX"` | Boolean | `false` | Optional |
 | (3) | Radius (length) | `"RADIUS"` | Number | 0 | Optional |
+
+> ⚠️ **원문 표는 이 행의 Value Type을 "Array"로 적었으나 `Number`로 기재한다.** 원문은 같은
+> `"RADIUS"` 항목을 구간별로 세 가지 타입(2D x-y `Boolean` / 2D x-z `Number` / 3D `Array`)으로
+> 표기하는데, JSON Schema는 세 분기 모두 `"type": "number"`이고 예제도 전부 스칼라(`0`, `20`)다.
+>
+> ✅ **2026-09-18 라이브 검증으로 확정.** `PROF[].RADIUS = [0, 20]`은 Gen·Civil 양쪽에서
+> `Wrong Field`로 거부되고 후속 GET은 `Not Found Key`를 반환했다(검증 환경과 HTTP 201 주의사항은
+> 위 2D Round 절의 주석 참고). 숫자값은 정상 생성·보존된다. 되돌리지 말 것 — Jira `MAPI-2485`
+> B-2로 제보 중이며, 원문이 정정되면 이 주석을 함께 정리한다.
 
 ### Python 예제
 

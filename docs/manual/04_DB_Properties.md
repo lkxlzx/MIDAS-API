@@ -2516,6 +2516,13 @@ midas_api("POST", "/db/ESSF", essf_data)
 > 최상위에 추가된 필드다(2026-09-06 정기 점검에서 발견). 원문 Specifications 표·Request Example에
 > 아직 반영되지 않아 타입 외에는 근거가 없으므로 위 설명은 스키마 `description` 문자열에 기반한
 > 추정이다.
+>
+> ⚠️ **원문 Specifications 표 누락 — 제보 대상.** 스키마에만 있고 표에 행이 없어, 표만 보는
+> 사용자는 이 세 필드의 존재를 알 수 없다. 2026-09-18 라이브 검증에서 세 필드 모두 실제로 전송·
+> 저장되는 것이 확인되어(`bSERVCHECK=true`, `dSHORTTERM=1.25`, `dLONGTERM=1.5`), 죽은 스키마가
+> 아니라 **표가 빠진 것**임이 분명해졌다. 다만 각 필드의 의미는 여전히 스키마 설명 문자열 기반
+> 추정이므로 위 "(추정)" 표기는 유지한다. 검증 상세는
+> [live_verification_feedback_20260918.md](../error_reports/live_verification_feedback_20260918.md) 참고.
 
 ### Request Body
 
