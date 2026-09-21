@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIDAS Gen NX — Auto Save Before Analysis</title>
+<style>
+  :root {
+    --bg: #1e1e1e; --surface: #252526; --border: #3e3e3e;
+    --kw: #569cd6; --fn: #dcdcaa; --str: #ce9178;
+    --cmt: #6a9955; --num: #b5cea8; --ok: #4ec9b0;
+    --err: #f44747; --info: #9cdcfe; --text: #d4d4d4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 32px 24px; max-width: 860px; margin: 0 auto; }
+  h1 { color: var(--ok); font-size: 1.15em; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { color: #808080; font-size: 0.85em; margin-bottom: 28px; }
+  h2 { color: var(--info); font-size: 0.9em; font-weight: 600; margin: 28px 0 10px; letter-spacing: 0.03em; text-transform: uppercase; }
+  p { color: #aaa; font-size: 0.88em; line-height: 1.75; margin-bottom: 8px; }
+  code { font-family: 'Cascadia Code', 'Fira Code', monospace; background: #2d2d2d; padding: 1px 6px; border-radius: 3px; color: var(--str); font-size: 0.9em; }
+  pre {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 20px; overflow-x: auto;
+    font-size: 0.82em; line-height: 1.65; margin-bottom: 8px;
+  }
+  .kw  { color: var(--kw); }
+  .fn  { color: var(--fn); }
+  .str { color: var(--str); }
+  .cmt { color: var(--cmt); font-style: italic; }
+  .num { color: var(--num); }
+  .section-note { background: #1a2a1a; border-left: 3px solid var(--ok); padding: 10px 14px; border-radius: 0 4px 4px 0; font-size: 0.85em; color: #aaa; margin-bottom: 16px; line-height: 1.6; }
+  .warn-note { background: #2a2a1a; border-left: 3px solid #d7ba7d; padding: 10px 14px; border-radius: 0 4px 4px 0; font-size: 0.85em; color: #aaa; margin-bottom: 16px; line-height: 1.6; }
+  .warn-note strong { color: #d7ba7d; }
+  label { display: block; color: var(--info); font-size: 0.82em; margin-bottom: 4px; margin-top: 14px; }
+  input { width: 100%; background: #3c3c3c; border: 1px solid #555; color: var(--text); padding: 7px 10px; border-radius: 4px; font-family: monospace; font-size: 0.85em; }
+  input:focus { outline: none; border-color: var(--ok); }
+  button { margin-top: 14px; padding: 8px 22px; background: #0e639c; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+  button:hover { background: #1177bb; }
+  #log { margin-top: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 14px; min-height: 90px; font-family: monospace; font-size: 0.83em; white-space: pre-wrap; line-height: 1.6; }
+  .ok   { color: var(--ok); }
+  .err  { color: var(--err); }
+  .info { color: var(--info); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .lang-badge { display: inline-block; font-size: 0.72em; padding: 1px 7px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+  .ko { background: #1a3a5c; color: #9cdcfe; }
+  .en { background: #1a3a2a; color: #4ec9b0; }
+  .flow { display: flex; flex-direction: column; gap: 2px; margin: 12px 0; font-size: 0.84em; font-family: monospace; }
+  .flow-step { padding: 6px 12px; background: #2a2a2a; border-radius: 3px; color: #ccc; }
+  .flow-step span { color: var(--ok); margin-right: 8px; }
+  .flow-arrow { color: #555; text-align: center; font-size: 0.8em; }
+</style>
+</head>
+<body>
+
+<!-- 语言：简体中文译文 | 原文：[韩文原文](../auto-save-before-analysis.html) · 译文生成：2026-09-21（机器辅助翻译，术语见 [GLOSSARY](../../../docs/zh-cn/GLOSSARY.md)） -->
+
+<h1>MIDAS Gen NX MAPI — Auto Save Before Analysis</h1>
+<p class="subtitle">
+  <span class="lang-badge ko">ZH-CN</span>执行分析前的文件自动保存模式 &nbsp;|&nbsp;
+  <span class="lang-badge en">EN</span>Auto-save pattern before running structural analysis
+</p>
+
+<!-- ── OVERVIEW ─────────────────────────────────────────── -->
+<h2>Overview</h2>
+
+<div class="section-note">
+  <strong style="color:var(--ok)">ZH-CN</strong>&nbsp;
+  MIDAS Gen NX 的 MAPI 在执行分析（<code>POST /doc/anal</code>）之前，
+  必须先保存文件（<code>POST /doc/saveas</code>）。
+  不保存就执行分析时，Gen NX 会弹出保存对话框，自动化流程因此中断。<br><br>
+  本示例先通过 <code>GET /mapikey/verify</code> 确认连接状态，随后在调用者指定的
+  保存文件夹（或 <code>C:/Temp</code> 回退路径）中组装文件名，
+  并按 <code>POST /doc/saveas → POST /doc/anal</code> 的顺序执行，展示完整流程。<br><br>
+  ⚠️ 登录邮箱账号与 PC 上实际的 Windows 账号名可能不同，因此从邮箱推断用户文件夹的做法
+  （<code>C:/Users/{邮箱前半部分}/...</code>）不可靠 —— 保存文件夹
+  请由调用者直接指定实际存在的路径。
+</div>
+<div class="section-note">
+  <strong style="color:var(--ok)">EN</strong>&nbsp;
+  MIDAS Gen NX MAPI requires saving the file (<code>POST /doc/saveas</code>) before
+  running analysis (<code>POST /doc/anal</code>).
+  Without saving first, Gen NX shows a save dialog that interrupts automation.<br><br>
+  This example first checks the connection via <code>GET /mapikey/verify</code>, then builds
+  the file name inside a caller-provided save folder (or a <code>C:/Temp</code> fallback), then
+  runs <code>POST /doc/saveas → POST /doc/anal</code> in the correct order.<br><br>
+  ⚠️ The login email account and the PC's actual Windows account name can differ, so guessing
+  the user folder from the email (<code>C:/Users/{email local-part}/...</code>) is unreliable —
+  always pass a real, existing folder as the save directory yourself.
+</div>
+
+<!-- ── FLOW ──────────────────────────────────────────────── -->
+<h2>Flow / 动作流程</h2>
+<div class="flow">
+  <div class="flow-step"><span>1</span>GET  /mapikey/verify → confirm connection (<code>j.user</code> is for display only, not for the path)</div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step"><span>2</span>build path from caller-provided <code>saveDir</code> (fallback <code>C:/Temp</code>) → <code>{saveDir}/gen_rc_temp_1234567.mgbx</code></div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step"><span>3</span>POST /doc/saveas &nbsp;{ Argument: "&lt;path&gt;" }</div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step"><span>4</span>POST /doc/anal &nbsp;&nbsp;&nbsp;{}</div>
+</div>
+
+<!-- ── WHY ORDER MATTERS ─────────────────────────────────── -->
+<h2>Why Order Matters / 顺序为何重要</h2>
+<div class="warn-note">
+  <strong>⚠️ ZH-CN</strong>&nbsp;
+  若在 <code>/doc/saveas</code> 之前先调用 <code>/doc/anal</code>，
+  Gen NX 会显示“是否保存？”对话框并等待响应。
+  MAPI 调用会陷入无限等待，既不超时也不报错。<br><br>
+  <strong>⚠️ EN</strong>&nbsp;
+  Calling <code>/doc/anal</code> before <code>/doc/saveas</code> causes Gen NX to show
+  a "Do you want to save?" dialog and wait for user input.
+  The MAPI call may hang indefinitely without a timeout or error.
+</div>
+
+<!-- ── SAVE FOLDER MUST EXIST ───────────────────────────────── -->
+<h2>Save Folder Must Already Exist / 保存文件夹必须预先存在</h2>
+<div class="warn-note">
+  <strong>⚠️ ZH-CN</strong>&nbsp;
+  <code>/doc/SAVEAS</code> 的官方文档（<a href="https://support.midasuser.com/hc/en-us/articles/35994277012377" style="color:#9cdcfe">Save As ↗</a>）里
+  并未写明向不存在的文件夹保存时的行为，但**已通过实际
+  MAPI 调用确认**（2026-08-31）：文件夹不存在时 Gen NX 会弹出“◯◯中存在无效路径”
+  错误对话框，MAPI 调用会在该对话框等待响应期间超时
+  （不会自动创建文件夹）。提前创建好文件夹即可正常返回 <code>200 OK</code> 并保存。
+  <code>C:/Temp</code> 也不是 Windows 默认文件夹，因此保存前
+  请自行确认/创建该文件夹是否存在。<br><br>
+  <strong>⚠️ EN</strong>&nbsp;
+  The official <a href="https://support.midasuser.com/hc/en-us/articles/35994277012377" style="color:#9cdcfe">Save As doc</a>
+  for <code>/doc/SAVEAS</code> does not state what happens if the target folder doesn't
+  exist, but this was **verified with a live MAPI call** (2026-08-31): if the folder is
+  missing, Gen NX shows a "there is an invalid path in ◯◯" error dialog, and the MAPI call
+  times out while that dialog waits for a response (the folder is NOT auto-created).
+  Creating the folder beforehand results in a normal <code>200 OK</code> save.
+  <code>C:/Temp</code> is not a default Windows folder either, so verify/create it yourself
+  before saving.
+</div>
+
+<!-- ── UNIT SETTING ──────────────────────────────────────── -->
+<h2>Unit Setting Before Build / 建模前先设置单位制</h2>
+<div class="warn-note">
+  <strong>⚠️ ZH-CN</strong>&nbsp;
+  在创建模型之前（调用 <code>PUT /db/node</code> 之前）必须先设置单位制。
+  若 Gen NX 以 kN/m 等其他单位打开，坐标 <code>7000</code>（本意为 mm）会被
+  解析成 <code>7000 m</code>，从而在分析结果中产生异常位移警告。<br><br>
+  <strong>⚠️ EN</strong>&nbsp;
+  Always set the unit system before creating model entities (<code>PUT /db/node</code>).
+  If Gen NX is open in a different unit (e.g. kN/m), the coordinate <code>7000</code>
+  (intended as mm) is interpreted as <code>7000 m</code>, causing abnormal displacement warnings.
+</div>
+
+<!-- ── CODE ─────────────────────────────────────────────── -->
+<h2>Code / 代码</h2>
+<pre>
+<span class="cmt">/**
+ * ZH: 从 Base URL 中移除 /gen、/civil，返回根 URL
+ *     /mapikey/verify 位于根路径（紧跟在端口之后）。
+ * EN: Strip /gen or /civil suffix to get the root URL.
+ *     /mapikey/verify lives at the root, not under /gen or /civil.
+ */</span>
+<span class="kw">function</span> <span class="fn">mapiRoot</span>(base) {
+  <span class="kw">return</span> base.replace(<span class="str">/\/(gen|civil)\/?$/i</span>, <span class="str">''</span>);
+}
+
+<span class="cmt">/**
+ * ZH: 确认连接状态并返回登录用户的邮箱
+ *     j.user 中包含完整邮箱（例："john@midasit.com"）
+ * EN: Verify connection and return the logged-in user's email.
+ *     j.user contains the full email (e.g. "john@midasit.com")
+ */</span>
+<span class="kw">async function</span> <span class="fn">verifyConn</span>(base, key) {
+  <span class="kw">const</span> res = <span class="kw">await</span> fetch(`${<span class="fn">mapiRoot</span>(base)}/mapikey/verify`, {
+    headers: { <span class="str">'MAPI-Key'</span>: key }
+  });
+  <span class="kw">let</span> j = {};
+  <span class="kw">try</span> { j = <span class="kw">await</span> res.json(); } <span class="kw">catch</span> (e) {}
+  <span class="kw">return</span> { ok: res.ok, j };
+}
+
+<span class="cmt">/**
+ * ZH: 决定保存路径
+ *     第 1 顺位：saveDir 参数中明确指定的文件夹（推荐 — 始终准确）
+ *     第 2 顺位：C:/Temp  （未指定 saveDir 时的固定回退 — 该文件夹也必须预先存在，不会自动生成）
+ *
+ *     ※ 文件夹不存在时 Gen NX 会弹出错误对话框，MAPI 调用会超时 —
+ *       已通过实际调用确认（2026-08-31，参考下方 "Save Folder Must Already Exist"）。
+ *     ※ %USERPROFILE% 之类的环境变量，MAPI 服务器（Gen NX 进程）无法识别。
+ *     ※ 不采用把 /mapikey/verify 的 j.user（登录邮箱）前半部分当作 Windows 用户名，
+ *       自动拼出 C:/Users/{username}/... 的方式 — 因为登录邮箱
+ *       账号与实际 PC 上的 Windows 账号名可能不同（例：公司邮箱
+ *       是 "kim@midasit.com"，但 Windows 账号是 "user01"）。j.user 仅用于确认连接，
+ *       保存路径请由调用者把实际存在的文件夹作为 saveDir 直接传入。
+ *
+ * EN: Determine save path.
+ *     1st : the folder passed explicitly as saveDir (recommended — always correct)
+ *     2nd : C:/Temp  (fixed fallback when saveDir is not given — this folder must also
+ *           already exist; it is NOT auto-created)
+ *
+ *     ※ If the folder is missing, Gen NX shows an error dialog and the MAPI call times
+ *       out — verified with a live call (2026-08-31, see "Save Folder Must Already Exist" below).
+ *     ※ Environment variables like %USERPROFILE% are NOT resolved by the MAPI server.
+ *     ※ We deliberately do NOT guess C:/Users/{username}/... from the local part of
+ *       j.user (the login email) returned by /mapikey/verify — the login email account
+ *       and the actual Windows account on the PC can differ (e.g. email "kim@midasit.com"
+ *       but Windows account "user01"). Use j.user only to confirm the connection; pass a
+ *       real, existing folder as saveDir instead.
+ */</span>
+<span class="kw">async function</span> <span class="fn">autoSavePath</span>(base, key, saveDir) {
+  <span class="kw">const</span> dir = (saveDir &amp;&amp; saveDir.trim()) ? saveDir.trim().replace(<span class="str">/[\\/]+$/</span>, <span class="str">''</span>) : <span class="str">'C:/Temp'</span>;
+  <span class="kw">return</span> `${dir}/gen_rc_temp_${Date.now()}.mgbx`;
+}
+
+<span class="cmt">/**
+ * ZH: 设置单位 → 创建模型 → 保存 → 分析 的完整流程
+ *     setUnit 必须在创建模型（添加节点）之前调用。
+ *     saveDir：由调用者传入实际存在的保存文件夹（推荐）。省略时使用 C:/Temp。
+ * EN: Set unit → build model → save → analyze — full flow.
+ *     setUnit MUST be called before creating any model entities (nodes/elements).
+ *     saveDir: caller-provided folder that actually exists (recommended). Falls back to C:/Temp if omitted.
+ */</span>
+<span class="kw">async function</span> <span class="fn">runAnalysis</span>(base, key, saveDir) {
+  <span class="kw">const</span> headers = { <span class="str">'MAPI-Key'</span>: key, <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> };
+  <span class="kw">const</span> api = (method, path, body) =>
+    fetch(`${base}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
+
+  <span class="cmt">// ① 预先设置单位制 (ZH: 添加节点前必需 / EN: must call before PUT /db/node)</span>
+  <span class="kw">await</span> <span class="fn">api</span>(<span class="str">'PUT'</span>, <span class="str">'/db/unit'</span>, { Assign: { <span class="num">1</span>: { FORCE: <span class="str">'N'</span>, DIST: <span class="str">'MM'</span> } } });
+
+  <span class="cmt">// ② ... 创建模型 (nodes, elements, loads ...) ...</span>
+
+  <span class="cmt">// ③ 保存 — 必须先于 /doc/anal (EN: must precede /doc/anal)</span>
+  <span class="kw">const</span> savePath = <span class="kw">await</span> <span class="fn">autoSavePath</span>(base, key, saveDir);
+  <span class="kw">await</span> <span class="fn">api</span>(<span class="str">'POST'</span>, <span class="str">'/doc/saveas'</span>, { Argument: savePath });
+
+  <span class="cmt">// ④ 分析 (EN: run analysis)</span>
+  <span class="kw">await</span> <span class="fn">api</span>(<span class="str">'POST'</span>, <span class="str">'/doc/anal'</span>, {});
+
+  <span class="kw">return</span> savePath;
+}
+</pre>
+
+<!-- ── LIVE DEMO ──────────────────────────────────────────── -->
+<h2>Live Demo — verifyConn &amp; Path Preview</h2>
+<p>
+  <span class="lang-badge ko">ZH-CN</span>不执行实际的保存与分析。仅确认连接后预览将要生成的路径。<br>
+  <span class="lang-badge en">EN</span>This demo only calls verifyConn. It does not save or analyze — just previews the generated path.
+</p>
+
+<label>Base URL &nbsp;<span style="color:#555; font-size:0.9em">(例：http://127.0.0.1:8090/gen)</span></label>
+<input id="baseUrl" placeholder="http://127.0.0.1:8090/gen">
+
+<label>MAPI Key</label>
+<input id="mapiKey" type="password" placeholder="your-mapi-key">
+
+<label>Save Directory &nbsp;<span style="color:#555; font-size:0.9em">(可选，留空则用 C:/Temp — 必须预先存在 / optional, defaults to C:/Temp — must already exist)</span></label>
+<input id="saveDir" placeholder="C:/Temp">
+
+<button onclick="runDemo()">Check Connection &amp; Preview Path</button>
+<div id="log">— 结果显示于此 / Results will appear here —</div>
+
+<hr>
+<p style="color:#555; font-size:0.8em">
+  MIDAS Gen NX Open API &nbsp;·&nbsp;
+  <a href="https://github.com/Dennis5882/MIDAS-API" style="color:#555">github.com/Dennis5882/MIDAS-API</a>
+</p>
+
+<script>
+function mapiRoot(base) {
+  return base.replace(/\/(gen|civil)\/?$/i, '');
+}
+
+async function verifyConn(base, key) {
+  const res = await fetch(`${mapiRoot(base)}/mapikey/verify`, {
+    headers: { 'MAPI-Key': key }
+  });
+  let j = {};
+  try { j = await res.json(); } catch (e) {}
+  return { ok: res.ok, j };
+}
+
+// j.user (login email) is used only to confirm the connection — never to guess a
+// Windows folder, since the email account and the PC's Windows account can differ.
+function buildSavePath(saveDir) {
+  const dir = (saveDir && saveDir.trim()) ? saveDir.trim().replace(/[\\/]+$/, '') : 'C:/Temp';
+  return `${dir}/gen_rc_temp_${Date.now()}.mgbx`;
+}
+
+async function runDemo() {
+  const base    = document.getElementById('baseUrl').value.trim().replace(/\/$/, '');
+  const key     = document.getElementById('mapiKey').value.trim();
+  const saveDir = document.getElementById('saveDir').value.trim();
+  const log     = document.getElementById('log');
+
+  if (!base || !key) {
+    log.innerHTML = '<span class="err">请输入 Base URL 和 MAPI Key / Enter Base URL and MAPI Key.</span>';
+    return;
+  }
+
+  log.innerHTML = '<span class="info">正在确认连接... / Checking connection...</span>';
+  try {
+    const { ok, j } = await verifyConn(base, key);
+    if (!ok || !j?.user) {
+      log.innerHTML = '<span class="err">连接失败 — 请检查 MAPI Key 或 Base URL。\nConnection failed — check your MAPI Key and Base URL.</span>';
+      return;
+    }
+    const path = buildSavePath(saveDir);
+    log.innerHTML =
+      `<span class="ok">✔ 连接成功 / Connected</span>\n` +
+      `  user    : ${j.user}\n` +
+      `  program : ${j.program ?? '—'}\n\n` +
+      `<span class="ok">✔ 保存路径 / Save path</span>\n  ${path}\n\n` +
+      `<span class="cmt">  （将以此路径调用 POST /doc/saveas — 文件夹必须预先存在 /\n` +
+      `   POST /doc/saveas will be called with this path — the folder must already exist)</span>`;
+  } catch (e) {
+    log.innerHTML = `<span class="err">错误 / Error: ${e.message}</span>`;
+  }
+}
+</script>
+</body>
+</html>
